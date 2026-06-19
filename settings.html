@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Power-Up Settings</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+</head>
+<body>
+  <div id="container" class="container fade-in">
+    <h3>Power-Up Settings</h3>
+    <p>Configure options that apply to all members on this board.</p>
+    
+    <div class="form-group">
+      <label for="board-prefix" class="form-label">Default Note Prefix</label>
+      <input type="text" id="board-prefix" class="form-control" placeholder="e.g. [Important] " />
+    </div>
+    
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button id="btn-save-settings" class="btn btn-primary">Save Settings</button>
+    </div>
+  </div>
+
+  <script src="https://p.trellocdn.com/power-up.min.js"></script>
+  <script>
+    var t = TrelloPowerUp.iframe();
+    var inputPrefix = document.getElementById('board-prefix');
+    var btnSave = document.getElementById('btn-save-settings');
+
+    t.render(function() {
+      return t.get('board', 'shared', 'notePrefix', '')
+        .then(function(prefix) {
+          if (prefix && !inputPrefix.value) {
+            inputPrefix.value = prefix;
+          }
+          t.sizeTo('#container').done();
+        });
+    });
+
+    btnSave.addEventListener('click', function() {
+      var prefixValue = inputPrefix.value;
+      t.set('board', 'shared', 'notePrefix', prefixValue)
+        .then(function() {
+          t.closePopup();
+        });
+    });
+  </script>
+</body>
+</html>

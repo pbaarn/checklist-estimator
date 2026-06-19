@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "trello": {
+      "source": "steipete/clawdis",
+      "sourceType": "github",
+      "skillPath": "skills/trello/SKILL.md",
+      "computedHash": "9331cb76894d53b1ea532968df385126a7f23f73e9afd0eedda04d59168aad45"
+    }
+  }
+}

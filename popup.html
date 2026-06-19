@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom Notes</title>
+  <link rel="stylesheet" href="./styles.css">
+  <!-- Trello Power-Up standard styles (optional helper, we layer ours on top) -->
+  <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+</head>
+<body>
+  <div id="container" class="container fade-in">
+    <div class="form-group">
+      <label for="card-note" class="form-label">Attach a Custom Note to this Card</label>
+      <textarea id="card-note" class="form-control" rows="3" placeholder="Write your notes here..."></textarea>
+    </div>
+    <div style="display: flex; gap: 8px; justify-content: flex-end;">
+      <button id="btn-clear" class="btn btn-secondary">Clear</button>
+      <button id="btn-save" class="btn btn-primary">Save Note</button>
+    </div>
+  </div>
+
+  <!-- Trello Power-Up library -->
+  <script src="https://p.trellocdn.com/power-up.min.js"></script>
+  <script>
+    // Initialize the Trello iframe helper
+    var t = TrelloPowerUp.iframe();
+
+    var textarea = document.getElementById('card-note');
+    var btnSave = document.getElementById('btn-save');
+    var btnClear = document.getElementById('btn-clear');
+
+    // Automatically resize the popup window to fit our container content
+    t.render(function() {
+      return t.get('card', 'shared', 'cardNote')
+        .then(function(note) {
+          if (note && !textarea.value) {
+            textarea.value = note;
+          }
+          t.sizeTo('#container').done();
+        });
+    });
+
+    // Save the note back to Trello card storage and close the popup
+    btnSave.addEventListener('click', function() {
+      var noteValue = textarea.value;
+      t.set('card', 'shared', 'cardNote', noteValue)
+        .then(function() {
+          t.closePopup();
+        });
+    });
+
+    // Clear the note and close
+    btnClear.addEventListener('click', function() {
+      t.remove('card', 'shared', 'cardNote')
+        .then(function() {
+          t.closePopup();
+        });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Estimated Checklist</title>
+  <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="https://p.trellocdn.com/power-up.min.css">
+</head>
+<body style="padding: 0; background: transparent;">
+  <div id="container" class="container fade-in" style="padding: 4px;">
+    
+    <!-- Checklist Progress Summary -->
+    <div class="progress-section" style="margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">
+        <span id="progress-text">0% complete</span>
+        <span id="estimate-summary">0m remaining (Total: 0m)</span>
+      </div>
+      <div class="progress-bar-container">
+        <div id="progress-bar-fill" class="progress-bar-fill"></div>
+      </div>
+    </div>
+
+    <!-- Checklist Items List -->
+    <div id="checklist-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+      <!-- Loaded dynamically -->
+    </div>
+
+    <!-- Add New Item Form -->
+    <form id="add-item-form" style="display: flex; gap: 8px; align-items: center;">
+      <input type="text" id="new-item-text" class="form-control" placeholder="Add an item with estimate..." style="flex: 1;" required />
+      <div style="display: flex; align-items: center; gap: 4px; width: 100px;">
+        <input type="number" id="new-item-estimate" class="form-control" value="30" min="1" style="text-align: center; padding: 10px 4px;" required />
+        <span style="font-size: 0.8rem; color: var(--text-muted);">min</span>
+      </div>
+      <button type="submit" class="btn btn-primary" style="padding: 10px 16px;">Add</button>
+    </form>
+
+  </div>
+
+  <script src="https://p.trellocdn.com/power-up.min.js"></script>
+  <script>
+    const t = TrelloPowerUp.iframe();
+    
+    const checklistList = document.getElementById('checklist-list');
+    const form = document.getElementById('add-item-form');
+    const newItemText = document.getElementById('new-item-text');
+    const newItemEstimate = document.getElementById('new-item-estimate');
+    
+    const progressText = document.getElementById('progress-text');
+    const estimateSummary = document.getElementById('estimate-summary');
+    const progressBarFill = document.getElementById('progress-bar-fill');
+    
+    let currentItems = [];
+
+    // Helper to generate unique IDs
+    function uuidv4() {
+      return 'item-' + Math.random().toString(36).substr(2, 9);
+    }
+
+    // Load and render checklist items
+    t.render(function() {
+      return t.get('card', 'shared', 'checklistItems', [])
+        .then(function(items) {
+          currentItems = items;
+          renderUI(items);
+          t.sizeTo('#container').done();
+        });
+    });
+
+    // Render Checklist UI
+    function renderUI(items) {
+      checklistList.innerHTML = '';
+      
+      if (!items || items.length === 0) {
+        checklistList.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 12px 0;">No items in checklist yet. Add one below!</div>`;
+        updateProgress(0, 0, 0);
+        return;
+      }
+
+      let totalEst = 0;
+      let completedEst = 0;
+      let completedCount = 0;
+
+      items.forEach(function(item, index) {
+        const estValue = parseInt(item.estimate, 10) || 0;
+        totalEst += estValue;
+        if (item.done) {
+          completedEst += estValue;
+          completedCount++;
+        }
+
+        // Create checklist row
+        const row = document.createElement('div');
+        row.className = 'checklist-item-row fade-in';
+        if (item.done) {
+          row.classList.add('done');
+        }
+
+        row.innerHTML = `
+          <input type="checkbox" class="checklist-checkbox" ${item.done ? 'checked' : ''} data-id="${item.id}" />
+          
+          <input type="text" class="checklist-text-input" value="${escapeHtml(item.text)}" data-id="${item.id}" placeholder="Item description" />
+          
+          <div class="checklist-estimate-wrapper">
+            <input type="number" class="checklist-estimate-input" value="${estValue}" min="0" data-id="${item.id}" />
+            <span style="font-size: 0.8rem; color: var(--text-muted);">m</span>
+          </div>
+          
+          <button class="checklist-delete-btn" data-id="${item.id}" title="Delete item">&times;</button>
+        `;
+
+        checklistList.appendChild(row);
+      });
+
+      const percent = Math.round((completedCount / items.length) * 100) || 0;
+      const remainingEst = totalEst - completedEst;
+      updateProgress(percent, remainingEst, totalEst);
+      attachEvents();
+    }
+
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+    }
+
+    // Update Progress Bar & Headers
+    function updateProgress(percent, remaining, total) {
+      progressText.textContent = `${percent}% complete`;
+      estimateSummary.textContent = `${remaining}m remaining (Total: ${total}m)`;
+      progressBarFill.style.width = `${percent}%`;
+    }
+
+    // Save items back to card pluginData
+    function saveItems(items) {
+      return t.set('card', 'shared', 'checklistItems', items)
+        .then(function() {
+          renderUI(items);
+        });
+    }
+
+    // Attach Event Listeners to rendered checklist elements
+    function attachEvents() {
+      // Toggle done state
+      const checkboxes = document.querySelectorAll('.checklist-checkbox');
+      checkboxes.forEach(function(cb) {
+        cb.addEventListener('change', function(e) {
+          const id = e.target.getAttribute('data-id');
+          const updated = currentItems.map(function(item) {
+            if (item.id === id) {
+              return Object.assign({}, item, { done: e.target.checked });
+            }
+            return item;
+          });
+          saveItems(updated);
+        });
+      });
+
+      // Edit item text description
+      const textInputs = document.querySelectorAll('.checklist-text-input');
+      textInputs.forEach(function(input) {
+        input.addEventListener('change', function(e) {
+          const id = e.target.getAttribute('data-id');
+          const updated = currentItems.map(function(item) {
+            if (item.id === id) {
+              return Object.assign({}, item, { text: e.target.value });
+            }
+            return item;
+          });
+          saveItems(updated);
+        });
+      });
+
+      // Edit estimate minutes
+      const estimateInputs = document.querySelectorAll('.checklist-estimate-input');
+      estimateInputs.forEach(function(input) {
+        input.addEventListener('change', function(e) {
+          const id = e.target.getAttribute('data-id');
+          const val = Math.max(0, parseInt(e.target.value, 10) || 0);
+          const updated = currentItems.map(function(item) {
+            if (item.id === id) {
+              return Object.assign({}, item, { estimate: val });
+            }
+            return item;
+          });
+          saveItems(updated);
+        });
+      });
+
+      // Delete item
+      const deleteBtns = document.querySelectorAll('.checklist-delete-btn');
+      deleteBtns.forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          const id = e.target.getAttribute('data-id');
+          const updated = currentItems.filter(function(item) {
+            return item.id !== id;
+          });
+          saveItems(updated);
+        });
+      });
+    }
+
+    // Add new item submission
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const text = newItemText.value.trim();
+      const est = parseInt(newItemEstimate.value, 10) || 0;
+      
+      if (!text) return;
+
+      const newItem = {
+        id: uuidv4(),
+        text: text,
+        estimate: est,
+        done: false
+      };
+
+      const updated = currentItems.concat(newItem);
+      
+      newItemText.value = '';
+      newItemEstimate.value = '30'; // reset to default
+      
+      saveItems(updated).then(function() {
+        t.sizeTo('#container').done();
+      });
+    });
+  </script>
+</body>
+</html>

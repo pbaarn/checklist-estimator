@@ -1,0 +1,360 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* CSS Variables for design system */
+:root {
+  --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  
+  /* Color Palette (Deep Ocean & Neon Cyan) */
+  --hue: 220;
+  --bg-primary: hsl(var(--hue), 25%, 10%);
+  --bg-secondary: hsl(var(--hue), 20%, 15%);
+  --bg-glass: hsla(var(--hue), 20%, 18%, 0.6);
+  --border-color: hsla(var(--hue), 20%, 25%, 0.8);
+  --border-focus: hsl(180, 80%, 50%);
+  
+  --text-primary: hsl(var(--hue), 10%, 95%);
+  --text-secondary: hsl(var(--hue), 10%, 70%);
+  --text-muted: hsl(var(--hue), 10%, 50%);
+  
+  --primary: hsl(180, 80%, 50%);
+  --primary-hover: hsl(180, 90%, 60%);
+  --primary-shadow: hsla(180, 80%, 50%, 0.25);
+  
+  --accent: hsl(280, 80%, 60%);
+  
+  --success: hsl(140, 70%, 45%);
+  --error: hsl(0, 80%, 60%);
+  
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  
+  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-md: 0 8px 16px rgba(0,0,0,0.2);
+  --shadow-lg: 0 16px 32px rgba(0,0,0,0.3);
+  
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Light theme overrides (can be toggled if needed) */
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg-primary: hsl(var(--hue), 20%, 98%);
+    --bg-secondary: hsl(var(--hue), 20%, 94%);
+    --bg-glass: hsla(var(--hue), 20%, 100%, 0.7);
+    --border-color: hsla(var(--hue), 20%, 85%, 0.8);
+    --border-focus: hsl(180, 90%, 40%);
+    --text-primary: hsl(var(--hue), 30%, 10%);
+    --text-secondary: hsl(var(--hue), 15%, 35%);
+    --text-muted: hsl(var(--hue), 10%, 60%);
+    --primary: hsl(180, 90%, 40%);
+    --primary-hover: hsl(180, 95%, 35%);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.5;
+  padding: 16px;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--radius-sm);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Container */
+.container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* Card layout */
+.card {
+  background: var(--bg-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: var(--shadow-md);
+  transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
+  margin-bottom: 16px;
+}
+
+.card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px var(--primary-shadow);
+}
+
+/* Headings */
+h1, h2, h3 {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+h1 {
+  font-size: 1.5rem;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: 1.15rem;
+}
+
+p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-weight: 550;
+  font-size: 0.875rem;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: hsl(var(--hue), 25%, 10%);
+  box-shadow: 0 4px 12px var(--primary-shadow);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px var(--primary-shadow);
+}
+
+.btn-secondary {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--border-color);
+  border-color: var(--text-muted);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+/* Inputs and Forms */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.form-control {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-shadow);
+}
+
+/* Statuses & Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 12px;
+  text-transform: uppercase;
+}
+
+.badge-accent {
+  background-color: hsla(280, 80%, 60%, 0.15);
+  color: var(--accent);
+}
+
+.badge-success {
+  background-color: hsla(140, 70%, 45%, 0.15);
+  color: var(--success);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-normal);
+}
+
+/* Checklist Styles */
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  background-color: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--primary);
+  box-shadow: 0 0 8px var(--primary-shadow);
+  width: 0%;
+  transition: width var(--transition-normal);
+}
+
+.checklist-item-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--bg-glass);
+  border: 1px solid var(--border-color);
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.checklist-item-row:hover {
+  border-color: hsla(var(--hue), 20%, 40%, 0.8);
+}
+
+.checklist-item-row.done {
+  opacity: 0.65;
+  border-color: transparent;
+  background-color: hsla(var(--hue), 20%, 12%, 0.4);
+}
+
+.checklist-checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.checklist-text-input {
+  flex: 1;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  padding: 4px 6px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: all var(--transition-fast);
+}
+
+.checklist-text-input:hover {
+  border-color: var(--border-color);
+  background-color: var(--bg-secondary);
+}
+
+.checklist-text-input:focus {
+  border-color: var(--primary);
+  background-color: var(--bg-secondary);
+  box-shadow: 0 0 0 1px var(--primary-shadow);
+}
+
+.checklist-item-row.done .checklist-text-input {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.checklist-estimate-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.checklist-estimate-input {
+  width: 50px;
+  text-align: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.checklist-estimate-input::-webkit-outer-spin-button,
+.checklist-estimate-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.checklist-estimate-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary-shadow);
+}
+
+.checklist-delete-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 0 4px;
+  line-height: 1;
+  transition: color var(--transition-fast);
+}
+
+.checklist-delete-btn:hover {
+  color: var(--error);
+}
+

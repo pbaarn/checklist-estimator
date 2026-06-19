@@ -1,0 +1,22 @@
+{
+  "name": "trello-powerup-boilerplate",
+  "version": "1.0.0",
+  "description": "A modern Trello Power-Up boilerplate with custom CSS, card capabilities, and a local Vite dev server.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "trello",
+    "powerup",
+    "boilerplate",
+    "vite",
+    "vanilla-js"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
