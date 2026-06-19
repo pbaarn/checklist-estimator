@@ -3,7 +3,7 @@
 /* CSS Variables for design system */
 :root {
   --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  
+
   /* Color Palette (Deep Ocean & Neon Cyan) */
   --hue: 220;
   --bg-primary: hsl(var(--hue), 25%, 10%);
@@ -11,28 +11,28 @@
   --bg-glass: hsla(var(--hue), 20%, 18%, 0.6);
   --border-color: hsla(var(--hue), 20%, 25%, 0.8);
   --border-focus: hsl(180, 80%, 50%);
-  
+
   --text-primary: hsl(var(--hue), 10%, 95%);
   --text-secondary: hsl(var(--hue), 10%, 70%);
   --text-muted: hsl(var(--hue), 10%, 50%);
-  
+
   --primary: hsl(180, 80%, 50%);
   --primary-hover: hsl(180, 90%, 60%);
   --primary-shadow: hsla(180, 80%, 50%, 0.25);
-  
+
   --accent: hsl(280, 80%, 60%);
-  
+
   --success: hsl(140, 70%, 45%);
   --error: hsl(0, 80%, 60%);
-  
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 16px;
-  
-  --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
-  --shadow-md: 0 8px 16px rgba(0,0,0,0.2);
-  --shadow-lg: 0 16px 32px rgba(0,0,0,0.3);
-  
+
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 8px 16px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 16px 32px rgba(0, 0, 0, 0.3);
+
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -73,13 +73,16 @@ body {
 ::-webkit-scrollbar {
   width: 8px;
 }
+
 ::-webkit-scrollbar-track {
   background: var(--bg-primary);
 }
+
 ::-webkit-scrollbar-thumb {
   background: var(--border-color);
   border-radius: var(--radius-sm);
 }
+
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
@@ -109,7 +112,9 @@ body {
 }
 
 /* Headings */
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 8px;
@@ -127,7 +132,7 @@ h2 {
 p {
   color: var(--text-secondary);
   font-size: 0.95rem;
-  margin-bottom: 12px;
+  margin-bottom: 2px;
 }
 
 /* Buttons */
@@ -229,8 +234,15 @@ p {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(2px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .fade-in {
@@ -391,5 +403,3 @@ p {
   box-shadow: 0 0 8px var(--primary-shadow);
   transform: scale(1.005);
 }
-
-
