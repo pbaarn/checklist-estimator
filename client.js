@@ -41,11 +41,13 @@ TrelloPowerUp.initialize({
           var total = items.reduce(function (sum, item) {
             return sum + (parseInt(item.estimate, 10) || 0);
           }, 0);
+          var totalItems = items.length;
+          var remainingItems = items.filter(function (item) { return !item.done; }).length;
           
           return [
             {
               icon: './icon.svg',
-              text: remaining + 'm / ' + total + 'm left',
+              text: remaining + 'm / ' + total + 'm left (' + remainingItems + '/' + totalItems + ')',
               color: remaining > 0 ? 'sky' : 'green'
             }
           ];
@@ -65,11 +67,13 @@ TrelloPowerUp.initialize({
           var total = items.reduce(function (sum, item) {
             return sum + (parseInt(item.estimate, 10) || 0);
           }, 0);
+          var totalItems = items.length;
+          var remainingItems = items.filter(function (item) { return !item.done; }).length;
           
           return [
             {
               title: 'Checklist Estimate',
-              text: remaining + 'm remaining (Total: ' + total + 'm)',
+              text: remaining + 'm remaining (Total: ' + total + 'm) • ' + remainingItems + '/' + totalItems + ' items left',
               color: remaining > 0 ? 'sky' : 'green'
             }
           ];

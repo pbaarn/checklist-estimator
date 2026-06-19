@@ -138,7 +138,7 @@ p {
   font-family: var(--font-sans);
   font-weight: 550;
   font-size: 0.875rem;
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
@@ -177,7 +177,7 @@ p {
 
 /* Inputs and Forms */
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .form-label {
@@ -185,7 +185,7 @@ p {
   font-size: 0.85rem;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .form-control {
@@ -195,7 +195,7 @@ p {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  padding: 10px 12px;
+  padding: 6px 10px;
   border-radius: var(--radius-sm);
   outline: none;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
@@ -229,7 +229,7 @@ p {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(6px); }
+  from { opacity: 0; transform: translateY(4px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -240,7 +240,7 @@ p {
 /* Checklist Styles */
 .progress-bar-container {
   width: 100%;
-  height: 8px;
+  height: 6px;
   background-color: var(--bg-secondary);
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -258,29 +258,32 @@ p {
 .checklist-item-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   background-color: var(--bg-glass);
   border: 1px solid var(--border-color);
-  padding: 8px 12px;
+  padding: 4px 8px;
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
+  cursor: grab;
 }
 
 .checklist-item-row:hover {
-  border-color: hsla(var(--hue), 20%, 40%, 0.8);
+  border-color: hsla(var(--hue), 20%, 45%, 0.8);
 }
 
 .checklist-item-row.done {
-  opacity: 0.65;
+  opacity: 0.6;
   border-color: transparent;
   background-color: hsla(var(--hue), 20%, 12%, 0.4);
+  cursor: default;
 }
 
 .checklist-checkbox {
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   accent-color: var(--primary);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .checklist-text-input {
@@ -289,8 +292,8 @@ p {
   border: 1px solid transparent;
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 0.95rem;
-  padding: 4px 6px;
+  font-size: 0.9rem;
+  padding: 2px 4px;
   border-radius: var(--radius-sm);
   outline: none;
   transition: all var(--transition-fast);
@@ -315,18 +318,19 @@ p {
 .checklist-estimate-wrapper {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
 .checklist-estimate-input {
-  width: 50px;
+  width: 44px;
   text-align: center;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 0.85rem;
-  padding: 4px;
+  font-size: 0.8rem;
+  padding: 2px 3px;
   border-radius: var(--radius-sm);
   outline: none;
   -moz-appearance: textfield;
@@ -347,14 +351,45 @@ p {
   background: transparent;
   border: none;
   color: var(--text-muted);
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   cursor: pointer;
-  padding: 0 4px;
+  padding: 0 2px;
   line-height: 1;
   transition: color var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .checklist-delete-btn:hover {
   color: var(--error);
 }
+
+/* Drag and Drop styles */
+.checklist-drag-handle {
+  color: var(--text-muted);
+  cursor: grab;
+  padding: 0 2px;
+  font-size: 1rem;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.checklist-drag-handle:hover {
+  color: var(--text-secondary);
+}
+
+.checklist-item-row.dragging {
+  opacity: 0.4;
+  border: 1px dashed var(--primary);
+  background-color: var(--bg-secondary);
+}
+
+.checklist-item-row.drag-over {
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 8px var(--primary-shadow);
+  transform: scale(1.005);
+}
+
 

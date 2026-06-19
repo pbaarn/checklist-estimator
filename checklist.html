@@ -10,8 +10,8 @@
   <div id="container" class="container fade-in" style="padding: 4px;">
     
     <!-- Checklist Progress Summary -->
-    <div class="progress-section" style="margin-bottom: 12px;">
-      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px;">
+    <div class="progress-section" style="margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 4px;">
         <span id="progress-text">0% complete</span>
         <span id="estimate-summary">0m remaining (Total: 0m)</span>
       </div>
@@ -21,18 +21,18 @@
     </div>
 
     <!-- Checklist Items List -->
-    <div id="checklist-list" style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;">
+    <div id="checklist-list" style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px;">
       <!-- Loaded dynamically -->
     </div>
 
     <!-- Add New Item Form -->
-    <form id="add-item-form" style="display: flex; gap: 8px; align-items: center;">
+    <form id="add-item-form" style="display: flex; gap: 6px; align-items: center;">
       <input type="text" id="new-item-text" class="form-control" placeholder="Add an item with estimate..." style="flex: 1;" required />
-      <div style="display: flex; align-items: center; gap: 4px; width: 100px;">
-        <input type="number" id="new-item-estimate" class="form-control" value="30" min="1" style="text-align: center; padding: 10px 4px;" required />
+      <div style="display: flex; align-items: center; gap: 4px; width: 90px;">
+        <input type="number" id="new-item-estimate" class="form-control" value="30" min="1" style="text-align: center; padding: 6px 4px;" required />
         <span style="font-size: 0.8rem; color: var(--text-muted);">min</span>
       </div>
-      <button type="submit" class="btn btn-primary" style="padding: 10px 16px;">Add</button>
+      <button type="submit" class="btn btn-primary" style="padding: 6px 12px;">Add</button>
     </form>
 
   </div>
@@ -92,11 +92,14 @@
         // Create checklist row
         const row = document.createElement('div');
         row.className = 'checklist-item-row fade-in';
+        row.setAttribute('draggable', 'true');
+        row.setAttribute('data-id', item.id);
         if (item.done) {
           row.classList.add('done');
         }
 
         row.innerHTML = `
+          <span class="checklist-drag-handle" title="Drag to reorder">⋮⋮</span>
           <input type="checkbox" class="checklist-checkbox" ${item.done ? 'checked' : ''} data-id="${item.id}" />
           
           <input type="text" class="checklist-text-input" value="${escapeHtml(item.text)}" data-id="${item.id}" placeholder="Item description" />
@@ -202,6 +205,65 @@
             return item.id !== id;
           });
           saveItems(updated);
+        });
+      });
+
+      // Drag and Drop reordering
+      let draggedItemId = null;
+      const rows = document.querySelectorAll('.checklist-item-row');
+      
+      rows.forEach(function(row) {
+        row.addEventListener('dragstart', function(e) {
+          // Only allow dragging from the drag handle (or its content)
+          const handle = row.querySelector('.checklist-drag-handle');
+          if (!handle.contains(e.target) && e.target !== handle) {
+            e.preventDefault();
+            return false;
+          }
+          
+          draggedItemId = row.getAttribute('data-id');
+          row.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', draggedItemId);
+        });
+
+        row.addEventListener('dragend', function() {
+          row.classList.remove('dragging');
+          rows.forEach(r => r.classList.remove('drag-over'));
+        });
+
+        row.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          
+          const currentId = row.getAttribute('data-id');
+          if (currentId !== draggedItemId) {
+            row.classList.add('drag-over');
+          }
+        });
+
+        row.addEventListener('dragleave', function() {
+          row.classList.remove('drag-over');
+        });
+
+        row.addEventListener('drop', function(e) {
+          e.preventDefault();
+          row.classList.remove('drag-over');
+          
+          const draggedId = e.dataTransfer.getData('text/plain');
+          const targetId = row.getAttribute('data-id');
+          
+          if (draggedId && targetId && draggedId !== targetId) {
+            const draggedIndex = currentItems.findIndex(item => item.id === draggedId);
+            const targetIndex = currentItems.findIndex(item => item.id === targetId);
+            
+            if (draggedIndex !== -1 && targetIndex !== -1) {
+              const itemsCopy = currentItems.slice();
+              const [removed] = itemsCopy.splice(draggedIndex, 1);
+              itemsCopy.splice(targetIndex, 0, removed);
+              saveItems(itemsCopy);
+            }
+          }
         });
       });
     }
