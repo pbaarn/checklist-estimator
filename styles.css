@@ -137,14 +137,14 @@ p {
   justify-content: center;
   font-family: var(--font-sans);
   font-weight: 550;
-  font-size: 0.875rem;
-  padding: 6px 12px;
+  font-size: 0.85rem;
+  padding: 4px 10px;
   border-radius: var(--radius-sm);
   border: none;
   cursor: pointer;
   transition: all var(--transition-fast);
   outline: none;
-  gap: 8px;
+  gap: 6px;
   text-decoration: none;
 }
 
@@ -177,25 +177,25 @@ p {
 
 /* Inputs and Forms */
 .form-group {
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .form-label {
   display: block;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-secondary);
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .form-control {
   width: 100%;
   font-family: var(--font-sans);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
-  padding: 6px 10px;
+  padding: 4px 8px;
   border-radius: var(--radius-sm);
   outline: none;
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
@@ -210,10 +210,10 @@ p {
 .badge {
   display: inline-flex;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
-  padding: 2px 8px;
-  border-radius: 12px;
+  padding: 1px 6px;
+  border-radius: 10px;
   text-transform: uppercase;
 }
 
@@ -229,7 +229,7 @@ p {
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
+  from { opacity: 0; transform: translateY(2px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -240,7 +240,7 @@ p {
 /* Checklist Styles */
 .progress-bar-container {
   width: 100%;
-  height: 6px;
+  height: 5px;
   background-color: var(--bg-secondary);
   border-radius: var(--radius-sm);
   overflow: hidden;
@@ -258,10 +258,10 @@ p {
 .checklist-item-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background-color: var(--bg-glass);
   border: 1px solid var(--border-color);
-  padding: 4px 8px;
+  padding: 2px 6px;
   border-radius: var(--radius-sm);
   transition: all var(--transition-fast);
   cursor: grab;
@@ -279,8 +279,8 @@ p {
 }
 
 .checklist-checkbox {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   accent-color: var(--primary);
   cursor: pointer;
   flex-shrink: 0;
@@ -292,8 +292,8 @@ p {
   border: 1px solid transparent;
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 0.9rem;
-  padding: 2px 4px;
+  font-size: 0.85rem;
+  padding: 1px 3px;
   border-radius: var(--radius-sm);
   outline: none;
   transition: all var(--transition-fast);
@@ -318,19 +318,19 @@ p {
 .checklist-estimate-wrapper {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
   flex-shrink: 0;
 }
 
 .checklist-estimate-input {
-  width: 44px;
+  width: 38px;
   text-align: center;
   background: var(--bg-secondary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 0.8rem;
-  padding: 2px 3px;
+  font-size: 0.75rem;
+  padding: 1px 2px;
   border-radius: var(--radius-sm);
   outline: none;
   -moz-appearance: textfield;

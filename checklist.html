@@ -51,6 +51,15 @@
     const progressBarFill = document.getElementById('progress-bar-fill');
     
     let currentItems = [];
+    let isDraggingAllowed = false;
+
+    // Reset drag allowance on mouseup globally
+    document.addEventListener('mouseup', function() {
+      isDraggingAllowed = false;
+    });
+    document.addEventListener('pointerup', function() {
+      isDraggingAllowed = false;
+    });
 
     // Helper to generate unique IDs
     function uuidv4() {
@@ -213,10 +222,19 @@
       const rows = document.querySelectorAll('.checklist-item-row');
       
       rows.forEach(function(row) {
+        const handle = row.querySelector('.checklist-drag-handle');
+        
+        // Listen for mousedown/pointerdown on the handle to allow dragging
+        handle.addEventListener('mousedown', function() {
+          isDraggingAllowed = true;
+        });
+        handle.addEventListener('pointerdown', function() {
+          isDraggingAllowed = true;
+        });
+
         row.addEventListener('dragstart', function(e) {
-          // Only allow dragging from the drag handle (or its content)
-          const handle = row.querySelector('.checklist-drag-handle');
-          if (!handle.contains(e.target) && e.target !== handle) {
+          // If the drag didn't originate from the handle, cancel it
+          if (!isDraggingAllowed) {
             e.preventDefault();
             return false;
           }
@@ -230,6 +248,7 @@
         row.addEventListener('dragend', function() {
           row.classList.remove('dragging');
           rows.forEach(r => r.classList.remove('drag-over'));
+          isDraggingAllowed = false; // reset state
         });
 
         row.addEventListener('dragover', function(e) {
