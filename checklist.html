@@ -309,6 +309,7 @@
       newItemEstimate.value = '30'; // reset to default
       
       saveItems(updated).then(function() {
+        newItemText.focus();
         t.sizeTo('#container').done();
       });
     });
