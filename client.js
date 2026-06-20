@@ -43,10 +43,13 @@ TrelloPowerUp.initialize({
               var actualVal = item.hasOwnProperty('actual') ? parseInt(item.actual, 10) : parseInt(item.estimate, 10);
               return sum + (actualVal || 0);
             }, 0);
+            var totalEstimate = items.reduce(function (sum, item) {
+              return sum + (parseInt(item.estimate, 10) || 0);
+            }, 0);
             return [
               {
                 icon: './icon.svg',
-                text: totalActual + 'm spent',
+                text: totalActual + 'm / ' + totalEstimate + 'm spent',
                 color: 'green'
               }
             ];
@@ -84,10 +87,13 @@ TrelloPowerUp.initialize({
               var actualVal = item.hasOwnProperty('actual') ? parseInt(item.actual, 10) : parseInt(item.estimate, 10);
               return sum + (actualVal || 0);
             }, 0);
+            var totalEstimate = items.reduce(function (sum, item) {
+              return sum + (parseInt(item.estimate, 10) || 0);
+            }, 0);
             return [
               {
                 title: 'Checklist Estimate',
-                text: 'Completed: ' + totalActual + 'm spent (' + totalItems + ' items)',
+                text: 'Completed: ' + totalActual + 'm spent (Est: ' + totalEstimate + 'm) • ' + totalItems + ' items',
                 color: 'green'
               }
             ];
