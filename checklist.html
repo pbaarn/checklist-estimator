@@ -92,6 +92,7 @@
 
       items.forEach(function(item, index) {
         const estValue = parseInt(item.estimate, 10) || 0;
+        const actualValue = item.hasOwnProperty('actual') ? (parseInt(item.actual, 10) || 0) : estValue;
         totalEst += estValue;
         if (item.done) {
           completedEst += estValue;
@@ -114,8 +115,15 @@
           <input type="text" class="checklist-text-input" value="${escapeHtml(item.text)}" data-id="${item.id}" placeholder="Item description" />
           
           <div class="checklist-estimate-wrapper">
-            <input type="number" class="checklist-estimate-input" value="${estValue}" min="0" data-id="${item.id}" />
-            <span style="font-size: 0.8rem; color: var(--text-muted);">m</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted); margin-right: 2px;">Est:</span>
+            <input type="number" class="checklist-estimate-input checklist-est-field" value="${estValue}" min="0" data-id="${item.id}" />
+            <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 1px;">m</span>
+          </div>
+          
+          <div class="checklist-actual-wrapper" style="display: flex; align-items: center; gap: 2px; flex-shrink: 0; margin-left: 4px;">
+            <span style="font-size: 0.7rem; color: var(--text-muted); margin-right: 2px;">Spent:</span>
+            <input type="number" class="checklist-estimate-input checklist-act-field" value="${actualValue}" min="0" data-id="${item.id}" />
+            <span style="font-size: 0.7rem; color: var(--text-muted); margin-left: 1px;">m</span>
           </div>
           
           <button class="checklist-delete-btn" data-id="${item.id}" title="Delete item">&times;</button>
@@ -190,14 +198,35 @@
       });
 
       // Edit estimate minutes
-      const estimateInputs = document.querySelectorAll('.checklist-estimate-input');
+      const estimateInputs = document.querySelectorAll('.checklist-est-field');
       estimateInputs.forEach(function(input) {
         input.addEventListener('change', function(e) {
           const id = e.target.getAttribute('data-id');
           const val = Math.max(0, parseInt(e.target.value, 10) || 0);
           const updated = currentItems.map(function(item) {
             if (item.id === id) {
-              return Object.assign({}, item, { estimate: val });
+              const prevEst = parseInt(item.estimate, 10) || 0;
+              const prevAct = item.hasOwnProperty('actual') ? (parseInt(item.actual, 10) || 0) : prevEst;
+              
+              // If actual spent matches the estimate (i.e. default), update it in sync
+              const newActual = (prevAct === prevEst) ? val : prevAct;
+              return Object.assign({}, item, { estimate: val, actual: newActual });
+            }
+            return item;
+          });
+          saveItems(updated);
+        });
+      });
+
+      // Edit actual spent minutes
+      const actualInputs = document.querySelectorAll('.checklist-act-field');
+      actualInputs.forEach(function(input) {
+        input.addEventListener('change', function(e) {
+          const id = e.target.getAttribute('data-id');
+          const val = Math.max(0, parseInt(e.target.value, 10) || 0);
+          const updated = currentItems.map(function(item) {
+            if (item.id === id) {
+              return Object.assign({}, item, { actual: val });
             }
             return item;
           });
@@ -300,6 +329,7 @@
         id: uuidv4(),
         text: text,
         estimate: est,
+        actual: est, // Default spent time to estimate
         done: false
       };
 

@@ -35,14 +35,29 @@ TrelloPowerUp.initialize({
     return t.get('card', 'shared', 'checklistItems', [])
       .then(function (items) {
         if (items && items.length > 0) {
+          var totalItems = items.length;
+          var remainingItems = items.filter(function (item) { return !item.done; }).length;
+          
+          if (remainingItems === 0) {
+            var totalActual = items.reduce(function (sum, item) {
+              var actualVal = item.hasOwnProperty('actual') ? parseInt(item.actual, 10) : parseInt(item.estimate, 10);
+              return sum + (actualVal || 0);
+            }, 0);
+            return [
+              {
+                icon: './icon.svg',
+                text: totalActual + 'm spent',
+                color: 'green'
+              }
+            ];
+          }
+
           var remaining = items.reduce(function (sum, item) {
             return sum + (item.done ? 0 : (parseInt(item.estimate, 10) || 0));
           }, 0);
           var total = items.reduce(function (sum, item) {
             return sum + (parseInt(item.estimate, 10) || 0);
           }, 0);
-          var totalItems = items.length;
-          var remainingItems = items.filter(function (item) { return !item.done; }).length;
           
           return [
             {
@@ -61,14 +76,29 @@ TrelloPowerUp.initialize({
     return t.get('card', 'shared', 'checklistItems', [])
       .then(function (items) {
         if (items && items.length > 0) {
+          var totalItems = items.length;
+          var remainingItems = items.filter(function (item) { return !item.done; }).length;
+          
+          if (remainingItems === 0) {
+            var totalActual = items.reduce(function (sum, item) {
+              var actualVal = item.hasOwnProperty('actual') ? parseInt(item.actual, 10) : parseInt(item.estimate, 10);
+              return sum + (actualVal || 0);
+            }, 0);
+            return [
+              {
+                title: 'Checklist Estimate',
+                text: 'Completed: ' + totalActual + 'm spent (' + totalItems + ' items)',
+                color: 'green'
+              }
+            ];
+          }
+
           var remaining = items.reduce(function (sum, item) {
             return sum + (item.done ? 0 : (parseInt(item.estimate, 10) || 0));
           }, 0);
           var total = items.reduce(function (sum, item) {
             return sum + (parseInt(item.estimate, 10) || 0);
           }, 0);
-          var totalItems = items.length;
-          var remainingItems = items.filter(function (item) { return !item.done; }).length;
           
           return [
             {
