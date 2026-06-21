@@ -31,91 +31,131 @@ TrelloPowerUp.initialize({
   },
   
   'card-badges': function (t, options) {
-    // Read checklist items to render a status badge on the card front
-    return t.get('card', 'shared', 'checklistItems', [])
-      .then(function (items) {
-        if (items && items.length > 0) {
-          var totalItems = items.length;
-          var remainingItems = items.filter(function (item) { return !item.done; }).length;
-          
-          if (remainingItems === 0) {
-            var totalActual = items.reduce(function (sum, item) {
-              var actualVal = item.hasOwnProperty('actual') ? parseInt(item.actual, 10) : parseInt(item.estimate, 10);
-              return sum + (actualVal || 0);
-            }, 0);
-            var totalEstimate = items.reduce(function (sum, item) {
-              return sum + (parseInt(item.estimate, 10) || 0);
-            }, 0);
-            return [
-              {
-                icon: './icon.svg',
-                text: totalActual + 'm / ' + totalEstimate + 'm spent',
-                color: 'green'
-              }
-            ];
-          }
+    // Read checklist items and due date state to render status badge on card front
+    return Promise.all([
+      t.get('card', 'shared', 'checklistItems', []),
+      t.card('dueComplete'),
+      t.get('card', 'shared', 'lastDueComplete', false)
+    ]).then(function (results) {
+      var items = results[0];
+      var dueComplete = (results[1] && results[1].dueComplete) || false;
+      var lastDueComplete = results[2];
 
-          var remaining = items.reduce(function (sum, item) {
-            return sum + (item.done ? 0 : (parseInt(item.estimate, 10) || 0));
+      if (items && items.length > 0) {
+        // Sync checklist items to completed if card transitioned to completed
+        if (dueComplete && !lastDueComplete) {
+          var anyUnfinished = items.some(function(item) { return !item.done; });
+          if (anyUnfinished) {
+            items = items.map(function(item) { return Object.assign({}, item, { done: true }); });
+            t.set('card', 'shared', 'checklistItems', items);
+            t.set('card', 'shared', 'lastDueComplete', true);
+          }
+        } else if (dueComplete !== lastDueComplete) {
+          t.set('card', 'shared', 'lastDueComplete', dueComplete);
+        }
+
+        var totalItems = items.length;
+        var remainingItems = items.filter(function (item) { return !item.done; }).length;
+        
+        // Show green completed badge if checklist is completed OR the card due date is marked complete
+        if (remainingItems === 0 || dueComplete) {
+          var totalActual = items.reduce(function (sum, item) {
+            var actualVal = item.hasOwnProperty('actual') ? parseInt(item.actual, 10) : parseInt(item.estimate, 10);
+            return sum + (actualVal || 0);
           }, 0);
-          var total = items.reduce(function (sum, item) {
+          var totalEstimate = items.reduce(function (sum, item) {
             return sum + (parseInt(item.estimate, 10) || 0);
           }, 0);
-          
           return [
             {
               icon: './icon.svg',
-              text: remaining + 'm / ' + total + 'm left (' + remainingItems + '/' + totalItems + ')',
-              color: remaining > 0 ? 'sky' : 'green'
+              text: totalActual + 'm / ' + totalEstimate + 'm spent',
+              color: 'green'
             }
           ];
         }
-        return [];
-      });
+
+        var remaining = items.reduce(function (sum, item) {
+          return sum + (item.done ? 0 : (parseInt(item.estimate, 10) || 0));
+        }, 0);
+        var total = items.reduce(function (sum, item) {
+          return sum + (parseInt(item.estimate, 10) || 0);
+        }, 0);
+        
+        return [
+          {
+            icon: './icon.svg',
+            text: remaining + 'm / ' + total + 'm left (' + remainingItems + '/' + totalItems + ')',
+            color: remaining > 0 ? 'sky' : 'green'
+          }
+        ];
+      }
+      return [];
+    });
   },
 
   'card-detail-badges': function (t, options) {
-    // Read checklist items to show details on the card back
-    return t.get('card', 'shared', 'checklistItems', [])
-      .then(function (items) {
-        if (items && items.length > 0) {
-          var totalItems = items.length;
-          var remainingItems = items.filter(function (item) { return !item.done; }).length;
-          
-          if (remainingItems === 0) {
-            var totalActual = items.reduce(function (sum, item) {
-              var actualVal = item.hasOwnProperty('actual') ? parseInt(item.actual, 10) : parseInt(item.estimate, 10);
-              return sum + (actualVal || 0);
-            }, 0);
-            var totalEstimate = items.reduce(function (sum, item) {
-              return sum + (parseInt(item.estimate, 10) || 0);
-            }, 0);
-            return [
-              {
-                title: 'Checklist Estimate',
-                text: 'Completed: ' + totalActual + 'm spent (Est: ' + totalEstimate + 'm) • ' + totalItems + ' items',
-                color: 'green'
-              }
-            ];
-          }
+    // Read checklist items and due date state to show details on card back
+    return Promise.all([
+      t.get('card', 'shared', 'checklistItems', []),
+      t.card('dueComplete'),
+      t.get('card', 'shared', 'lastDueComplete', false)
+    ]).then(function (results) {
+      var items = results[0];
+      var dueComplete = (results[1] && results[1].dueComplete) || false;
+      var lastDueComplete = results[2];
 
-          var remaining = items.reduce(function (sum, item) {
-            return sum + (item.done ? 0 : (parseInt(item.estimate, 10) || 0));
+      if (items && items.length > 0) {
+        // Sync checklist items to completed if card transitioned to completed
+        if (dueComplete && !lastDueComplete) {
+          var anyUnfinished = items.some(function(item) { return !item.done; });
+          if (anyUnfinished) {
+            items = items.map(function(item) { return Object.assign({}, item, { done: true }); });
+            t.set('card', 'shared', 'checklistItems', items);
+            t.set('card', 'shared', 'lastDueComplete', true);
+          }
+        } else if (dueComplete !== lastDueComplete) {
+          t.set('card', 'shared', 'lastDueComplete', dueComplete);
+        }
+
+        var totalItems = items.length;
+        var remainingItems = items.filter(function (item) { return !item.done; }).length;
+        
+        // Show green completed badge if checklist is completed OR the card due date is marked complete
+        if (remainingItems === 0 || dueComplete) {
+          var totalActual = items.reduce(function (sum, item) {
+            var actualVal = item.hasOwnProperty('actual') ? parseInt(item.actual, 10) : parseInt(item.estimate, 10);
+            return sum + (actualVal || 0);
           }, 0);
-          var total = items.reduce(function (sum, item) {
+          var totalEstimate = items.reduce(function (sum, item) {
             return sum + (parseInt(item.estimate, 10) || 0);
           }, 0);
-          
           return [
             {
               title: 'Checklist Estimate',
-              text: remaining + 'm remaining (Total: ' + total + 'm) • ' + remainingItems + '/' + totalItems + ' items left',
-              color: remaining > 0 ? 'sky' : 'green'
+              text: 'Completed: ' + totalActual + 'm spent (Est: ' + totalEstimate + 'm) • ' + totalItems + ' items',
+              color: 'green'
             }
           ];
         }
-        return [];
-      });
+
+        var remaining = items.reduce(function (sum, item) {
+          return sum + (item.done ? 0 : (parseInt(item.estimate, 10) || 0));
+        }, 0);
+        var total = items.reduce(function (sum, item) {
+          return sum + (parseInt(item.estimate, 10) || 0);
+        }, 0);
+        
+        return [
+          {
+            title: 'Checklist Estimate',
+            text: remaining + 'm remaining (Total: ' + total + 'm) • ' + remainingItems + '/' + totalItems + ' items left',
+            color: remaining > 0 ? 'sky' : 'green'
+          }
+        ];
+      }
+      return [];
+    });
   },
 
   'show-settings': function (t, options) {

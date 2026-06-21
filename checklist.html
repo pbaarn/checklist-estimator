@@ -68,12 +68,46 @@
 
     // Load and render checklist items
     t.render(function() {
-      return t.get('card', 'shared', 'checklistItems', [])
-        .then(function(items) {
-          currentItems = items;
-          renderUI(items);
-          t.sizeTo('#container').done();
-        });
+      return Promise.all([
+        t.get('card', 'shared', 'checklistItems', []),
+        t.card('dueComplete'),
+        t.get('card', 'shared', 'lastDueComplete', false)
+      ]).then(function(results) {
+        var items = results[0];
+        var dueComplete = (results[1] && results[1].dueComplete) || false;
+        var lastDueComplete = results[2];
+
+        // If it transitioned from incomplete to complete, mark all items as done!
+        if (dueComplete && !lastDueComplete) {
+          var anyUnfinished = items.some(function(item) { return !item.done; });
+          if (anyUnfinished) {
+            items = items.map(function(item) { return Object.assign({}, item, { done: true }); });
+            currentItems = items;
+            
+            return Promise.all([
+              t.set('card', 'shared', 'checklistItems', items),
+              t.set('card', 'shared', 'lastDueComplete', true)
+            ]).then(function() {
+              renderUI(items);
+              t.sizeTo('#container').done();
+            });
+          }
+        }
+        
+        // Sync lastDueComplete
+        if (dueComplete !== lastDueComplete) {
+          return t.set('card', 'shared', 'lastDueComplete', dueComplete)
+            .then(function() {
+              currentItems = items;
+              renderUI(items);
+              t.sizeTo('#container').done();
+            });
+        }
+
+        currentItems = items;
+        renderUI(items);
+        t.sizeTo('#container').done();
+      });
     });
 
     // Render Checklist UI
